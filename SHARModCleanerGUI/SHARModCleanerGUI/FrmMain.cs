@@ -27,6 +27,8 @@ namespace SHARModCleanerGUI
         private const int S_IWOTH = 0x2;
         private const int S_IXOTH = 0x1;
 
+        private static readonly HttpClient HttpClient = new();
+
         public FrmMain()
         {
             InitializeComponent();
@@ -178,6 +180,17 @@ namespace SHARModCleanerGUI
             }
 
             PBProgress.Value++;
+        }
+
+        private void DownloadFile(string url, string path)
+        {
+            string? dir = Path.GetDirectoryName(path);
+            if (!string.IsNullOrWhiteSpace(dir))
+                Directory.CreateDirectory(dir);
+
+            using FileStream fs = File.OpenWrite(path);
+            using Stream s = HttpClient.GetStreamAsync(url).GetAwaiter().GetResult();
+            s.CopyTo(fs);
         }
 
         private void Process(string inputFolder, string outputFolder, bool removeUnchanged, bool convertRSD, bool generateDiffs, string sharFolder, bool logCopied)
@@ -490,7 +503,24 @@ namespace SHARModCleanerGUI
                 {
                     AddLog($"Saved {BytesToString(diffBytes)} in {diffCount} diffed files.");
                     if (diffCount > 0)
-                        File.WriteAllText(Path.Combine(outputFolder, "Resources", "Handle_P3D_Diffs.lua"), Properties.Resources.Handle_P3D_Diffs);
+                    {
+                        try
+                        {
+                            File.WriteAllText(Path.Combine(outputFolder, "Resources", "Handle_P3D_Diffs.lua"), Properties.Resources.Handle_P3D_Diffs);
+                            AddLog("Created P3D Diffs handler.");
+                            string P3D2LuaFile = Path.Combine(outputFolder, "Resources", "lib", "P3D2.lua");
+                            if (!File.Exists(P3D2LuaFile))
+                            {
+                                DownloadFile("https://raw.githubusercontent.com/Hampo/LuaP3DLib/master/lib/P3D2.lua", P3D2LuaFile);
+                                AddLog("Downloaded P3D2.lua");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            AddLog($"Error creating diff handler: {ex.Message}. Exiting.");
+                            return;
+                        }
+                    }
                 }
 
                 AddLog($"Saved {BytesToString(unchangedBytes + convertedBytes + diffBytes)} across all settings.");
