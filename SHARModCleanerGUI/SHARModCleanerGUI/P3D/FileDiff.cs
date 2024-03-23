@@ -33,33 +33,40 @@ namespace P3D
             AddedChunks.Reverse();
         }
 
-        public void WriteDiff(string dir, string fileName)
+        public void WriteDiff(string dir, string path)
         {
-            if (!Directory.Exists(dir))
-                Directory.CreateDirectory(dir);
+            string filePath = Path.Combine(dir, path);
+            string? fileDir = Path.GetDirectoryName(filePath);
+            if (!string.IsNullOrWhiteSpace(fileDir))
+                Directory.CreateDirectory(fileDir);
 
             File diffFile = new();
             StringBuilder luaFile = new();
 
-            luaFile.AppendLine("local DeletedChunks = {");
+            luaFile.Append("local DeletedChunks = {");
             foreach (int i in DeletedChunks)
-                luaFile.AppendLine($"\t{i + 1},");
+                luaFile.Append($"{i + 1},");
             luaFile.AppendLine("}");
-            luaFile.AppendLine();
 
-            luaFile.AppendLine("local AddedChunks = {");
+            luaFile.Append("local AddedChunks = {");
             foreach ((int, Chunk) addedChunk in AddedChunks)
             {
                 diffFile.Chunks.Add(addedChunk.Item2);
-                luaFile.AppendLine($"\t{{{addedChunk.Item1 + 1},{diffFile.Chunks.Count}}},");
+                luaFile.Append($"{{{addedChunk.Item1 + 1},{diffFile.Chunks.Count}}},");
             }
             luaFile.AppendLine("}");
             luaFile.AppendLine();
 
-            luaFile.AppendLine("return DeletedChunks, AddedChunks");
+            string luaPath = path.Replace('\\', '/');
+            luaFile.AppendLine($"local OrigP3D = P3D.P3DFile(\"/GameData/{luaPath}\")");
+            luaFile.AppendLine($"local ModifiedP3D = P3D.P3DFile(GetModPath() .. \"/Resources/P3D_Diffs/{luaPath}\")");
+            luaFile.AppendLine("ProcessP3DDiff(OrigP3D, ModifiedP3D, DeletedChunks, AddedChunks)");
+            luaFile.AppendLine();
 
-            System.IO.File.WriteAllText(Path.Combine(dir, $"{fileName}.lua"), luaFile.ToString());
-            diffFile.Write(Path.Combine(dir, fileName));
+            luaFile.AppendLine("OrigP3D:Output()");
+
+            System.IO.File.WriteAllText($"{filePath}.lua", luaFile.ToString());
+            diffFile.Write(filePath);
         }
     }
 }
