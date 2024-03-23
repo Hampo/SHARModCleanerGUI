@@ -143,9 +143,7 @@ end
 
 print("P3D_Diffs", "Handling diff for file: " .. Path)
 
-local diff = dofile(DiffLuaPath)
-local DeletedChunks = diff.DeletedChunks
-local AddedChunks = diff.AddedChunks
+local DeletedChunks, AddedChunks = dofile(DiffLuaPath)
 local origP3D = P3D.P3DFile(GamePath)
 local diffP3D = P3D.P3DFile(DiffPath)
 

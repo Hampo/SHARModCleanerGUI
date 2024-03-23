@@ -41,16 +41,13 @@ namespace P3D
             File diffFile = new();
             StringBuilder luaFile = new();
 
-            luaFile.AppendLine("local Diff = {}");
-            luaFile.AppendLine();
-
-            luaFile.AppendLine("Diff.DeletedChunks = {");
+            luaFile.AppendLine("local DeletedChunks = {");
             foreach (int i in DeletedChunks)
                 luaFile.AppendLine($"\t{i + 1},");
             luaFile.AppendLine("}");
             luaFile.AppendLine();
 
-            luaFile.AppendLine("Diff.AddedChunks = {");
+            luaFile.AppendLine("local AddedChunks = {");
             foreach ((int, Chunk) addedChunk in AddedChunks)
             {
                 diffFile.Chunks.Add(addedChunk.Item2);
@@ -59,7 +56,7 @@ namespace P3D
             luaFile.AppendLine("}");
             luaFile.AppendLine();
 
-            luaFile.AppendLine("return Diff");
+            luaFile.AppendLine("return DeletedChunks, AddedChunks");
 
             System.IO.File.WriteAllText(Path.Combine(dir, $"{fileName}.lua"), luaFile.ToString());
             diffFile.Write(Path.Combine(dir, fileName));
