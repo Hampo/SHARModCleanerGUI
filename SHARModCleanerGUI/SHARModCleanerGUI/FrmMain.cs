@@ -343,15 +343,15 @@ namespace SHARModCleanerGUI
                 return;
             }
 
+            long unchangedBytes = 0;
+            long unchangedCount = 0;
+            long convertedBytes = 0;
+            long convertedCount = 0;
+            long diffBytes = 0;
+            long diffCount = 0;
             try
             {
                 AddLog("Processing CustomFiles...");
-                long unchangedBytes = 0;
-                long unchangedCount = 0;
-                long convertedBytes = 0;
-                long convertedCount = 0;
-                long diffBytes = 0;
-                long diffCount = 0;
                 StringBuilder customFilesIniSB = new();
                 foreach (string customFile in customFiles)
                 {
@@ -531,7 +531,7 @@ namespace SHARModCleanerGUI
                 return;
             }
 
-            if (convertRSD)
+            if (convertRSD && convertedCount > 0)
             {
                 string outputMetaFile = Path.Combine(outputFolder, "Meta.ini");
                 string outputMetaIni = File.ReadAllText(outputMetaFile);
