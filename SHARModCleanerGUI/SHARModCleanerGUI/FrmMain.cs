@@ -1,7 +1,6 @@
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Runtime.InteropServices;
 using System.Text;
 using Xabe.FFmpeg;
 using Xabe.FFmpeg.Downloader;
@@ -10,23 +9,6 @@ namespace SHARModCleanerGUI
 {
     public partial class FrmMain : Form
     {
-        [DllImport("libc", SetLastError = true, CharSet = CharSet.Unicode)]
-        private static extern int chmod(string pathname, int mode);
-
-        // user permissions
-        private const int S_IRUSR = 0x100;
-        private const int S_IWUSR = 0x80;
-        private const int S_IXUSR = 0x40;
-
-        // group permission
-        private const int S_IRGRP = 0x20;
-        private const int S_IWGRP = 0x10;
-        private const int S_IXGRP = 0x8;
-
-        // other permissions
-        private const int S_IROTH = 0x4;
-        private const int S_IWOTH = 0x2;
-        private const int S_IXOTH = 0x1;
 
         private static readonly HttpClient HttpClient = new();
 
@@ -305,17 +287,6 @@ namespace SHARModCleanerGUI
                 }
                 else
                     AddLog("Downloaded FFmpeg");
-                if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux) || RuntimeInformation.IsOSPlatform(OSPlatform.FreeBSD))
-                {
-                    string ffmpegPath = Path.Combine(ffmpegDir, "ffmpeg");
-                    string ffprobePath = Path.Combine(ffmpegDir, "ffprobe");
-
-                    int _0777 = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH;
-                    _ = chmod(ffmpegPath, _0777);
-                    _ = chmod(ffprobePath, _0777);
-
-                    AddLog("Updated FFmpeg permissions");
-                }
             }
 
             string[] rootFiles;
