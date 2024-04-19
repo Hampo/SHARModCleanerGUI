@@ -1,8 +1,4 @@
-﻿using System.Diagnostics;
-using System.Runtime.CompilerServices;
-using System.Text;
-
-namespace P3D
+﻿namespace P3D
 {
     public class FileDiffNew
     {
@@ -93,7 +89,15 @@ namespace P3D
                     unchanged = false;
                     c = new(chunk.ID, chunk.Data);
                 }
-                unchanged = ProcessChunks(originalChunks, chunk.SubChunks, diffP3D, c) && unchanged;
+                if (ProcessChunks(originalChunks, chunk.SubChunks, diffP3D, c) && index != -1)
+                {
+                    c.ID = 0x73737373;
+                    c.SubChunks.Clear();
+                }
+                else
+                {
+                    unchanged = false;
+                }
                 parent.SubChunks.Add(c);
             }
             return unchanged;
