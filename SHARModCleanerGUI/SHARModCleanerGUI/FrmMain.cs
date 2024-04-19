@@ -33,8 +33,7 @@ namespace SHARModCleanerGUI
                 return;
 
             TxtInputFolder.Text = fbd.SelectedPath;
-            if (string.IsNullOrWhiteSpace(TxtOutputFolder.Text))
-                TxtOutputFolder.Text = $"{fbd.SelectedPath} Minified";
+            TxtOutputFolder.Text = $"{fbd.SelectedPath} Minified";
         }
 
         private void BtnBrowseOutputFolder_Click(object sender, EventArgs e)
