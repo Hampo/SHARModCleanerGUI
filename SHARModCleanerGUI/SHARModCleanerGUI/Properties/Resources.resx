@@ -125,14 +125,105 @@ local StartTime = GetTime()
 local OrigFile = ReadFile("/GameData/" .. Path)
 local DiffFile = ReadFile(GetModPath() .. "/Resources/P3D_Diffs/" .. Path)
 
+local string_rep = string.rep
 local string_sub = string.sub
 local string_pack = string.pack
 local string_unpack = string.unpack
 local table_concat = table.concat
+local table_move = table.move
+
+-- LZR (Lempel - Ziv - Radical) Decompression
+local function DecompressBlock(Input, OutputSize, InputPos)
+	local Output = {}
+	local OutputPos = 1
+	
+	while OutputPos &lt;= OutputSize do
+		local code
+		code, InputPos = string_unpack("&lt;B", Input, InputPos)
+		
+		if code &gt; 15 then
+			local matchLength = code &amp; 15
+			local tmp
+			
+			if matchLength == 0 then
+				matchLength = 15
+				tmp, InputPos = string_unpack("&lt;B", Input, InputPos)
+				while tmp == 0 do
+					matchLength = matchLength + 255
+					tmp, InputPos = string_unpack("&lt;B", Input, InputPos)
+				end
+				matchLength = matchLength + tmp
+			end
+			
+			tmp, InputPos = string_unpack("&lt;B", Input, InputPos)
+			local offset = (code &gt;&gt; 4) | tmp &lt;&lt; 4
+			local matchPos = OutputPos - offset
+			
+			local len = matchLength &gt;&gt; 2
+			matchLength = matchLength - (len &lt;&lt; 2)
+			
+			repeat
+				Output[OutputPos] = Output[matchPos]
+				Output[OutputPos + 1] = Output[matchPos + 1]
+				Output[OutputPos + 2] = Output[matchPos + 2]
+				Output[OutputPos + 3] = Output[matchPos + 3]
+				matchPos = matchPos + 4
+				OutputPos = OutputPos + 4
+				len = len - 1
+			until len == 0
+			
+			while matchLength ~= 0 do
+				Output[OutputPos] = Output[matchPos]
+				matchPos = matchPos + 1
+				OutputPos = OutputPos + 1
+				matchLength = matchLength - 1
+			end
+		else
+			local runLength = code
+			
+			if runLength == 0 then
+				code, InputPos = string_unpack("&lt;B", Input, InputPos)
+				while code == 0 do
+					runLength = runLength + 255
+					code, InputPos = string_unpack("&lt;B", Input, InputPos)
+				end
+				runLength = runLength + code
+				
+				table_move({string_unpack("&lt;c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1", Input, InputPos)}, 1, 15, OutputPos, Output)
+				InputPos = InputPos + 15
+				OutputPos = OutputPos + 15
+			end
+			
+			table_move({string_unpack(string_rep("c1", runLength), Input, InputPos)}, 1, runLength, OutputPos, Output)
+			InputPos = InputPos + runLength
+			OutputPos = OutputPos + runLength
+		end
+	end
+	
+	return table_concat(Output), OutputPos
+end
+
+local function Decompress(File, UncompressedLength)
+	local DecompressedLength = 0
+	local pos = 9
+	local UncompressedTbl = {}
+	local CompressedLength, UncompressedBlock
+	while DecompressedLength &lt; UncompressedLength do
+		CompressedLength, UncompressedBlock, pos = string_unpack("&lt;II", File, pos)
+		UncompressedTbl[#UncompressedTbl + 1] = DecompressBlock(File, UncompressedBlock, pos)
+		pos = pos + CompressedLength
+		DecompressedLength = DecompressedLength + UncompressedBlock
+	end
+	return table_concat(UncompressedTbl)
+end
 
 local OrigChunks = {}
 local OrigChunksN = 0
 local ID, HeaderLength, ChunkLength, Pos = string_unpack("III", OrigFile)
+if ID == 0x5A443350 then
+	OrigFile = Decompress(OrigFile, HeaderLength)
+	ID, HeaderLength, ChunkLength, Pos = string_unpack("&lt;III", OrigFile)
+end
 local FileLength = ChunkLength
 while Pos &lt; FileLength do
 	ID, HeaderLength, ChunkLength, Pos = string_unpack("III", OrigFile, Pos)

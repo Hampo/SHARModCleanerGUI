@@ -68,15 +68,15 @@ namespace SHARModCleanerGUI.Properties {
         ///local OrigFile = ReadFile(&quot;/GameData/&quot; .. Path)
         ///local DiffFile = ReadFile(GetModPath() .. &quot;/Resources/P3D_Diffs/&quot; .. Path)
         ///
+        ///local string_rep = string.rep
         ///local string_sub = string.sub
         ///local string_pack = string.pack
         ///local string_unpack = string.unpack
         ///local table_concat = table.concat
+        ///local table_move = table.move
         ///
-        ///local OrigChunks = {}
-        ///local OrigChunksN = 0
-        ///local ID, HeaderLength, ChunkLength, Pos = string_unpack(&quot;III&quot;, OrigFile)
-        ///local FileLength = ChunkLength        /// [rest of string was truncated]&quot;;.
+        ///-- LZR (Lempel - Ziv - Radical) Decompression
+        ///local function DecompressBlock(Input, Outpu [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string HandleDiffLua {
             get {
