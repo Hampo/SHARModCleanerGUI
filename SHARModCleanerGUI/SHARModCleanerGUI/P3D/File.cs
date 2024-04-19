@@ -2,7 +2,7 @@
 {
     public class File
     {
-        private const uint P3DSignature = 0xFF443350;
+        public const uint P3DSignature = 0xFF443350;
 
         public List<Chunk> Chunks { get; } = [];
 

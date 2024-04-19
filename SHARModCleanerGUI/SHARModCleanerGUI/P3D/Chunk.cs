@@ -2,7 +2,7 @@
 {
     public class Chunk
     {
-        public uint ID { get; private set; }
+        public uint ID { get; set; }
         public byte[] Data { get; set; }
         public List<Chunk> SubChunks { get; } = [];
 
@@ -28,6 +28,12 @@
                 SubChunks.Add(new(chunkId, chunkHeaderSize, data[pos..(pos + chunkSize - 12)]));
                 pos += chunkSize - 12;
             }
+        }
+
+        public Chunk(uint id, byte[] data)
+        {
+            ID = id;
+            Data = data;
         }
 
         public virtual void Write(BinaryWriter bw)

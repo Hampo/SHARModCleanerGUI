@@ -75,7 +75,7 @@
             // 
             SCMain.Panel2.Controls.Add(GBOutput);
             SCMain.Size = new Size(800, 450);
-            SCMain.SplitterDistance = 266;
+            SCMain.SplitterDistance = 336;
             SCMain.TabIndex = 0;
             // 
             // GBInput
@@ -98,7 +98,7 @@
             GBInput.Dock = DockStyle.Fill;
             GBInput.Location = new Point(0, 0);
             GBInput.Name = "GBInput";
-            GBInput.Size = new Size(266, 450);
+            GBInput.Size = new Size(336, 450);
             GBInput.TabIndex = 0;
             GBInput.TabStop = false;
             GBInput.Text = "Input";
@@ -119,7 +119,7 @@
             // BtnBrowseSHARFolder
             // 
             BtnBrowseSHARFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BtnBrowseSHARFolder.Location = new Point(229, 200);
+            BtnBrowseSHARFolder.Location = new Point(299, 200);
             BtnBrowseSHARFolder.Name = "BtnBrowseSHARFolder";
             BtnBrowseSHARFolder.Size = new Size(31, 23);
             BtnBrowseSHARFolder.TabIndex = 13;
@@ -132,7 +132,7 @@
             TxtSHARFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TxtSHARFolder.Location = new Point(12, 200);
             TxtSHARFolder.Name = "TxtSHARFolder";
-            TxtSHARFolder.Size = new Size(212, 23);
+            TxtSHARFolder.Size = new Size(281, 23);
             TxtSHARFolder.TabIndex = 12;
             // 
             // LblSHARFolder
@@ -149,7 +149,7 @@
             PBProgress.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             PBProgress.Location = new Point(12, 386);
             PBProgress.Name = "PBProgress";
-            PBProgress.Size = new Size(248, 23);
+            PBProgress.Size = new Size(318, 23);
             PBProgress.TabIndex = 10;
             // 
             // BtnProcess
@@ -157,7 +157,7 @@
             BtnProcess.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
             BtnProcess.Location = new Point(12, 415);
             BtnProcess.Name = "BtnProcess";
-            BtnProcess.Size = new Size(248, 23);
+            BtnProcess.Size = new Size(318, 23);
             BtnProcess.TabIndex = 9;
             BtnProcess.Text = "Process";
             BtnProcess.UseVisualStyleBackColor = true;
@@ -202,7 +202,7 @@
             // BtnBrowseOutputFolder
             // 
             BtnBrowseOutputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BtnBrowseOutputFolder.Location = new Point(229, 81);
+            BtnBrowseOutputFolder.Location = new Point(299, 81);
             BtnBrowseOutputFolder.Name = "BtnBrowseOutputFolder";
             BtnBrowseOutputFolder.Size = new Size(31, 23);
             BtnBrowseOutputFolder.TabIndex = 5;
@@ -215,7 +215,7 @@
             TxtOutputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TxtOutputFolder.Location = new Point(12, 81);
             TxtOutputFolder.Name = "TxtOutputFolder";
-            TxtOutputFolder.Size = new Size(212, 23);
+            TxtOutputFolder.Size = new Size(281, 23);
             TxtOutputFolder.TabIndex = 4;
             // 
             // LblOutputFolder
@@ -230,7 +230,7 @@
             // BtnBrowseInputFolder
             // 
             BtnBrowseInputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            BtnBrowseInputFolder.Location = new Point(229, 37);
+            BtnBrowseInputFolder.Location = new Point(299, 37);
             BtnBrowseInputFolder.Name = "BtnBrowseInputFolder";
             BtnBrowseInputFolder.Size = new Size(31, 23);
             BtnBrowseInputFolder.TabIndex = 2;
@@ -243,7 +243,7 @@
             TxtInputFolder.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
             TxtInputFolder.Location = new Point(12, 37);
             TxtInputFolder.Name = "TxtInputFolder";
-            TxtInputFolder.Size = new Size(212, 23);
+            TxtInputFolder.Size = new Size(281, 23);
             TxtInputFolder.TabIndex = 1;
             // 
             // LblInputFolder
@@ -261,7 +261,7 @@
             GBOutput.Dock = DockStyle.Fill;
             GBOutput.Location = new Point(0, 0);
             GBOutput.Name = "GBOutput";
-            GBOutput.Size = new Size(530, 450);
+            GBOutput.Size = new Size(460, 450);
             GBOutput.TabIndex = 1;
             GBOutput.TabStop = false;
             GBOutput.Text = "Output";
@@ -275,7 +275,7 @@
             LBLogs.Location = new Point(3, 19);
             LBLogs.Name = "LBLogs";
             LBLogs.SelectionMode = SelectionMode.MultiExtended;
-            LBLogs.Size = new Size(524, 428);
+            LBLogs.Size = new Size(454, 428);
             LBLogs.TabIndex = 0;
             LBLogs.KeyDown += LBLogs_KeyDown;
             // 
@@ -283,19 +283,19 @@
             // 
             CMSLogs.Items.AddRange(new ToolStripItem[] { ExportToolStripMenuItem, ClearToolStripMenuItem });
             CMSLogs.Name = "CMSLogs";
-            CMSLogs.Size = new Size(181, 70);
+            CMSLogs.Size = new Size(109, 48);
             // 
             // ExportToolStripMenuItem
             // 
             ExportToolStripMenuItem.Name = "ExportToolStripMenuItem";
-            ExportToolStripMenuItem.Size = new Size(180, 22);
+            ExportToolStripMenuItem.Size = new Size(108, 22);
             ExportToolStripMenuItem.Text = "Export";
             ExportToolStripMenuItem.Click += ExportToolStripMenuItem_Click;
             // 
             // ClearToolStripMenuItem
             // 
             ClearToolStripMenuItem.Name = "ClearToolStripMenuItem";
-            ClearToolStripMenuItem.Size = new Size(180, 22);
+            ClearToolStripMenuItem.Size = new Size(108, 22);
             ClearToolStripMenuItem.Text = "Clear";
             ClearToolStripMenuItem.Click += ClearToolStripMenuItem_Click;
             // 
@@ -306,6 +306,7 @@
             ClientSize = new Size(800, 450);
             Controls.Add(SCMain);
             Icon = (Icon)resources.GetObject("$this.Icon");
+            MinimumSize = new Size(645, 360);
             Name = "FrmMain";
             Text = "SHAR Mod Cleaner";
             Load += FrmMain_Load;
