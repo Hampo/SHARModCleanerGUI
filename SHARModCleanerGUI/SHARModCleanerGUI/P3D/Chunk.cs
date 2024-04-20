@@ -7,6 +7,20 @@
         public List<Chunk> SubChunks { get; } = [];
 
         public int Size => 12 + Data.Length + SubChunks.Sum(x => x.Size);
+        public byte[] Bytes
+        {
+            get
+            {
+                List<byte> bytes = [];
+                bytes.AddRange(BitConverter.GetBytes(ID));
+                bytes.AddRange(BitConverter.GetBytes(Data.Length + 12));
+                bytes.AddRange(BitConverter.GetBytes(Size));
+                bytes.AddRange(Data);
+                foreach (var chunk in SubChunks)
+                    bytes.AddRange(chunk.Bytes);
+                return [.. bytes];
+            }
+        }
 
         public Chunk(uint id, int headerSize, byte[] data)
         {
