@@ -29,7 +29,7 @@
 
             P3D.File modifiedP3D = new(modifiedFile);
 
-            List<(uint, byte[])> originalChunks = [];
+            List<(uint, byte[], byte[])> originalChunks = [];
             int pos = 12;
             while (pos < originalBytes.Length)
             {
@@ -42,7 +42,7 @@
                 int chunkSize = BitConverter.ToInt32(originalBytes, pos);
                 pos += sizeof(uint);
 
-                originalChunks.Add((chunkId, originalBytes[pos..(pos + chunkHeaderSize - 12)]));
+                originalChunks.Add((chunkId, originalBytes[pos..(pos + chunkHeaderSize - 12)], originalBytes[(pos - 12)..(pos + chunkSize - 12)]));
                 pos += chunkHeaderSize - 12;
             }
 
@@ -50,57 +50,64 @@
 
             foreach (var chunk in modifiedP3D.Chunks)
             {
-                var index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item2.SequenceEqual(chunk.Data));
                 P3D.Chunk c;
+
+                var index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item3.SequenceEqual(chunk.Bytes));
                 if (index != -1)
                 {
                     AllNew = false;
-                    c = new(0x69696969, BitConverter.GetBytes(index + 1));
+                    c = new(0x73737373, BitConverter.GetBytes(index + 1));
                 }
                 else
                 {
-                    c = new(chunk.ID, chunk.Data);
-                }
+                    index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item2.SequenceEqual(chunk.Data));
+                    if (index != -1)
+                    {
+                        AllNew = false;
+                        c = new(0x69696969, BitConverter.GetBytes(index + 1));
+                    }
+                    else
+                    {
+                        c = new(chunk.ID, chunk.Data);
+                    }
 
-                if (ProcessChunks(originalChunks, chunk.SubChunks, Diff, c) && index != -1)
-                {
-                    c.ID = 0x73737373;
-                    c.SubChunks.Clear();
+                    ProcessChunks(originalChunks, chunk.SubChunks, Diff, c);
                 }
 
                 Diff.Chunks.Add(c);
             }
         }
 
-        private bool ProcessChunks(List<(uint, byte[])> originalChunks, List<P3D.Chunk> modifiedChunks, P3D.File diffP3D, P3D.Chunk parent)
+        private void ProcessChunks(List<(uint, byte[], byte[])> originalChunks, List<P3D.Chunk> modifiedChunks, P3D.File diffP3D, P3D.Chunk parent)
         {
-            bool unchanged = true;
             foreach (var chunk in modifiedChunks)
             {
-                var index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item2.SequenceEqual(chunk.Data));
                 P3D.Chunk c;
+
+                var index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item3.SequenceEqual(chunk.Bytes));
                 if (index != -1)
                 {
                     AllNew = false;
-                    c = new(0x69696969, BitConverter.GetBytes(index + 1));
+                    c = new(0x73737373, BitConverter.GetBytes(index + 1));
                 }
                 else
                 {
-                    unchanged = false;
-                    c = new(chunk.ID, chunk.Data);
+                    index = originalChunks.FindIndex(x => x.Item1 == chunk.ID && x.Item2.SequenceEqual(chunk.Data));
+                    if (index != -1)
+                    {
+                        AllNew = false;
+                        c = new(0x69696969, BitConverter.GetBytes(index + 1));
+                    }
+                    else
+                    {
+                        c = new(chunk.ID, chunk.Data);
+                    }
+
+                    ProcessChunks(originalChunks, chunk.SubChunks, diffP3D, c);
                 }
-                if (ProcessChunks(originalChunks, chunk.SubChunks, diffP3D, c) && index != -1)
-                {
-                    c.ID = 0x73737373;
-                    c.SubChunks.Clear();
-                }
-                else
-                {
-                    unchanged = false;
-                }
+
                 parent.SubChunks.Add(c);
             }
-            return unchanged;
         }
     }
 }
