@@ -34,16 +34,13 @@
             while (pos < originalBytes.Length)
             {
                 uint chunkId = BitConverter.ToUInt32(originalBytes, pos);
-                pos += sizeof(uint);
 
-                int chunkHeaderSize = BitConverter.ToInt32(originalBytes, pos);
-                pos += sizeof(uint);
+                int chunkHeaderSize = BitConverter.ToInt32(originalBytes, pos + sizeof(uint));
 
-                int chunkSize = BitConverter.ToInt32(originalBytes, pos);
-                pos += sizeof(uint);
+                int chunkSize = BitConverter.ToInt32(originalBytes, pos + sizeof(uint) + sizeof(uint));
 
-                originalChunks.Add((chunkId, originalBytes[pos..(pos + chunkHeaderSize - 12)], originalBytes[(pos - 12)..(pos + chunkSize - 12)]));
-                pos += chunkHeaderSize - 12;
+                originalChunks.Add((chunkId, originalBytes[(pos + 12)..(pos + chunkHeaderSize)], originalBytes[pos..(pos + chunkSize)]));
+                pos += chunkHeaderSize;
             }
 
             Diff = new();
